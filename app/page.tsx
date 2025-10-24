@@ -6,7 +6,17 @@ import { BRAND_ANSWERS_STORAGE_KEY } from '@/app/constants';
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#0b0b0b] px-6 py-12">
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#0b0b0b] px-6 py-12">
+      {/* Background GIF */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <img
+          src="/landing-page.gif"
+          alt=""
+          className="h-full w-full object-cover opacity-40"
+        />
+        {/* Optional overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/30" />
+      </div>
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 flex items-center justify-between px-8 py-6 z-50">
         <motion.div
@@ -21,7 +31,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <main className="flex max-w-5xl flex-col items-center justify-center text-center">
+      <main className="relative z-10 flex max-w-5xl flex-col items-center justify-center text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -59,16 +69,6 @@ export default function Home() {
             />
           </Link>
         </motion.div>
-
-        {/* Subtle bottom text */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.8 }}
-          className="mt-24 text-sm font-light tracking-widest text-gray-700"
-        >
-          STEP 1 — BRAND DISCOVERY
-        </motion.p>
       </main>
     </div>
   );

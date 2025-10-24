@@ -42,6 +42,18 @@ A cinematic conversational upload UI for marketing leads to describe their brand
 - **Responsive Design**: Mobile-optimized carousel with touch scroll
 - **Scrollable Modal**: Modal supports scrolling for longer content
 
+### Step 4: AI-Powered Outreach Email
+- **Auto-Generated Email**: Gemini generates personalized outreach email on page load
+- **Brand Voice Matching**: Email tone matches brand's voice from Step 1
+- **Smart Context**: Includes campaign details, community values, and collaboration specifics
+- **Editable Textarea**: Users can edit the generated email before sending
+- **Budget Transparency**: Clearly states budget and non-monetary offerings
+- **Copy to Clipboard**: One-click copy functionality with visual feedback
+- **Email Client Integration**: "Open in Email Client" button with pre-filled subject and body
+- **Regenerate Option**: Generate a fresh email with different wording
+- **Loading States**: Skeleton shimmer animation while email generates
+- **Error Handling**: Graceful fallback to mock email if API fails
+
 ## Getting Started
 
 ### Prerequisites
@@ -132,6 +144,8 @@ npm start
     route.ts          # Serverless API endpoint for Gemini integration
   /moodboard
     route.ts          # Serverless API endpoint for Unsplash integration
+  /generate-email
+    route.ts          # Serverless API endpoint for email generation
 ```
 
 ## Community Images
@@ -224,10 +238,14 @@ if (isOutdoor && adjectives.length >= 2) {
    - Market trends metrics (AI-generated)
    - Potential collaborations with budgets and offerings
 8. **Community Collaborations** (`/communities`) → Click "Explore Communities →"
-   - Horizontal carousel of vetted community cards
+   - Horizontal carousel of vetted community cards with hero images
    - Click card to view modal with detailed collaboration info
    - Select a community to proceed
-9. **Contact Page** (`/contact`) → Placeholder for AI-generated outreach
+9. **Outreach Email** (`/contact`) → Auto-generates personalized email
+   - AI drafts email in brand's tone with campaign and community context
+   - Edit email directly in textarea
+   - Copy to clipboard or open in email client
+   - Regenerate for different wording
 10. **Regenerate & Export** → Regenerate report or export as PDF anytime
 11. **Edit Capability** → Navigate back to edit brand inputs anytime
 
@@ -300,17 +318,29 @@ No external state library required for this demo.
 
 ### Step 3b: Community Collaborations
 ✅ Communities page loads with carousel of AI-recommended communities  
-✅ Cards display community name, engagement types, description, and stats  
+✅ Cards display hero image, community name, engagement types, description, and stats  
 ✅ Manual horizontal scroll with CSS snap points  
-✅ Click card opens modal with full collaboration details  
+✅ Click card opens modal with full collaboration details and large hero image  
 ✅ Modal shows budget, non-monetary offerings, and community reach metrics  
 ✅ "Select this community" button highlights card and reveals "Next" CTA  
 ✅ Selected community data persists to contact page  
 ✅ Smooth Framer Motion animations on hover and modal open/close  
-✅ Hero section with diagonal overlapping Unsplash images  
+✅ Community images with hover zoom and gradient overlays  
 ✅ "Export Deck (PDF)" compiles full campaign report with images  
 ✅ Data enrichment: Gemini collaborations + communities.json details  
 ✅ Mobile responsive: carousel works with touch scroll
+
+### Step 4: AI Outreach Email
+✅ Contact page auto-generates personalized outreach email on load  
+✅ Email includes brand name, tone, campaign details, and community context  
+✅ Budget and non-monetary offerings clearly stated  
+✅ Editable textarea allows customization before sending  
+✅ "Copy to Clipboard" button with visual feedback  
+✅ "Open in Email Client" button with pre-filled subject and body  
+✅ "Regenerate" button creates fresh email with different wording  
+✅ Loading state with skeleton shimmer animation  
+✅ Error handling with retry option  
+✅ Mock email fallback when no Gemini API key
 
 ## Testing
 
@@ -385,6 +415,45 @@ No external state library required for this demo.
 - Without Unsplash API key: Returns placeholder images in diagonal layout
 - With Unsplash API key: Fetches keyword-relevant images with creative overlapping arrangement
 - Images have reduced shadow overlay for better title visibility
+
+### Testing Step 4: AI Outreach Email
+
+1. After selecting a community on `/communities`, click "Next →"
+2. Verify navigation to `/contact` page
+3. **Auto-Generation**:
+   - Page should immediately show loading state (skeleton animation)
+   - After 2-3 seconds, email should appear in textarea
+   - Email should include brand name, campaign title, community name
+4. **Email Content Verification**:
+   - Check that tone matches brand tone from Step 1
+   - Verify budget amount is correct
+   - Verify non-monetary offerings are listed
+   - Check that collaboration description is included
+5. **Editing**:
+   - Click in textarea and edit the email
+   - Changes should persist in real-time
+6. **Copy Functionality**:
+   - Click "Copy to Clipboard"
+   - Button should change to "✓ Copied to Clipboard"
+   - Paste elsewhere to verify email was copied
+7. **Email Client**:
+   - Click "Open in Email Client"
+   - Default email client should open with pre-filled subject and body
+8. **Regenerate**:
+   - Click "Regenerate" button
+   - Loading state should appear
+   - New email with different wording should generate
+9. **Error Handling**:
+   - If Gemini API fails, verify error message appears
+   - Click "Try again" to retry generation
+
+**Expected Behavior:**
+
+**Email Generation:**
+- Without Gemini API key: Returns well-formatted mock email with all collaboration details
+- With Gemini API key: Calls real API and returns AI-generated personalized email
+- Email tone should match brand voice (e.g., "playful, authentic" vs. "professional, formal")
+- Rate limit: After 5 requests in 1 minute, shows "Rate limit exceeded" error
 
 ## Technical Details
 
