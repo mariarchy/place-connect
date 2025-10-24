@@ -19,6 +19,9 @@ COPY . .
 # Build the Next.js application
 RUN npm run build
 
+# Verify public folder exists after build
+RUN ls -la /app/public/communities/ || echo "WARNING: public/communities not found!"
+
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
@@ -28,13 +31,17 @@ ENV NODE_ENV production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy necessary files
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
+# Copy standalone server files
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 
-# Set ownership of files to nextjs user
-RUN chown -R nextjs:nodejs /app
+# Copy static assets (built CSS/JS)
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Copy public folder to both root and standalone expected location
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+
+# Verify public folder in final image
+RUN ls -la /app/public/communities/ && echo "✓ Public images copied successfully" || echo "✗ Public images NOT found"
 
 USER nextjs
 
