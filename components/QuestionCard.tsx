@@ -15,7 +15,6 @@ interface QuestionCardProps {
   fileNames?: string[];
   onFileChange?: (files: FileList) => void;
   fieldName?: string;
-  autoCompleteType?: string;
   useInput?: boolean;
 }
 
@@ -32,7 +31,6 @@ export function QuestionCard({
   fileNames = [],
   onFileChange,
   fieldName = '',
-  autoCompleteType = 'on',
   useInput = false,
 }: QuestionCardProps) {
   const handleSubmit = (e: React.FormEvent) => {
@@ -110,7 +108,7 @@ export function QuestionCard({
           <input
             type="text"
             name={fieldName}
-            autoComplete={autoCompleteType}
+            autoComplete="on"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
@@ -119,7 +117,7 @@ export function QuestionCard({
         ) : (
           <textarea
             name={fieldName}
-            autoComplete={autoCompleteType}
+            autoComplete="on"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
