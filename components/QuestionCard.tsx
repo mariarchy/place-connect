@@ -108,7 +108,7 @@ export function QuestionCard({
           <input
             type="text"
             name={fieldName}
-            autoComplete="on"
+            autoComplete={fieldName || 'off'}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
@@ -117,7 +117,7 @@ export function QuestionCard({
         ) : (
           <textarea
             name={fieldName}
-            autoComplete="on"
+            autoComplete={fieldName || 'off'}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
