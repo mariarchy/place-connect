@@ -39,36 +39,52 @@ const questions = [
     id: 'brandName',
     question: "What's your brand name?",
     placeholder: 'e.g., PLACE Connect, Urban Outpost, Culture Lab...',
+    fieldName: 'organization',
+    autoComplete: 'organization',
+    useInput: true,
   },
   {
     id: 'brandWebsite',
     question: "What's your brand website?",
     placeholder: 'e.g., https://placeconnect.com',
+    fieldName: 'url',
+    autoComplete: 'url',
+    useInput: true,
   },
   {
     id: 'mission',
     question: "What's your brand's mission or core idea?",
     placeholder: 'e.g., We connect urban creators with sustainable outdoor experiences...',
+    fieldName: 'mission',
+    autoComplete: 'on',
   },
   {
     id: 'tone',
     question: 'What words describe your tone of voice?',
     placeholder: 'e.g., playful, authentic, bold, minimalist...',
+    fieldName: 'tone',
+    autoComplete: 'on',
   },
   {
     id: 'communities',
     question: 'Who do you want to connect with — what kind of communities or subcultures?',
     placeholder: 'e.g., skaters, chess enthusiasts, indie music lovers...',
+    fieldName: 'communities',
+    autoComplete: 'on',
   },
   {
     id: 'inspiration',
     question: "What's an event or campaign that inspired you?",
     placeholder: 'e.g., A pop-up skate park collaboration, a film festival...',
+    fieldName: 'inspiration',
+    autoComplete: 'on',
   },
   {
     id: 'budget',
     question: 'What is your budget?',
     placeholder: 'e.g., $10k-$50k, $100k+...',
+    fieldName: 'budget',
+    autoComplete: 'on',
   },
   {
     id: 'upload',
@@ -470,6 +486,9 @@ function BrandDiscoveryContent() {
                   isFileUpload={currentQuestion.isFileUpload}
                   fileNames={currentQuestion.isFileUpload ? answers.fileNames : []}
                   onFileChange={handleFileChange}
+                  fieldName={currentQuestion.fieldName}
+                  autoCompleteType={currentQuestion.autoComplete}
+                  useInput={currentQuestion.useInput}
                 />
               </AnimatePresence>
             </div>
