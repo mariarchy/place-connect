@@ -371,9 +371,8 @@ export function BrandSummaryCard({ summary, onEdit }: BrandSummaryCardProps) {
               className="group relative overflow-hidden rounded-full border border-white bg-transparent px-12 py-4 text-base font-light tracking-wider text-white transition-all duration-300 hover:bg-white hover:text-black"
               onClick={handleGenerateReport}
             >
-              <span className="relative z-10 flex items-center space-x-2">
-                <span>✨</span>
-                <span>Generate Campaign Report</span>
+              <span className="relative z-10 flex items-center space-x-2" style={{ fontFamily: 'var(--font-druk-wide)' }}>
+                <span>Tap In</span>
               </span>
             </button>
           )}
