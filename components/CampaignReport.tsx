@@ -1,10 +1,11 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
-import { MoodboardGrid, type MoodboardImage } from './MoodboardGrid';
+import { type MoodboardImage } from './MoodboardGrid';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { useRouter } from 'next/navigation';
 
 interface Collaboration {
   engagementType: string;
@@ -19,9 +20,17 @@ interface CommunityCollaboration {
   collaborations: Collaboration[];
 }
 
+interface CulturalMetric {
+  trend: string;
+  metric: string;
+  summary: string;
+}
+
 interface CampaignReportData {
-  brandEssence: string;
-  culturalInsight: string;
+  culturalInsight: {
+    description: string;
+    metrics: CulturalMetric[];
+  };
   campaignIdea: {
     title: string;
     description: string;
@@ -37,21 +46,46 @@ interface CampaignReportProps {
   isRegenerating?: boolean;
 }
 
+// Diagonal image positions for creative overlapping layout
+const IMAGE_POSITIONS = [
+  { rotation: -3, zIndex: 4, offsetX: '-5%', offsetY: '10%' },
+  { rotation: 2, zIndex: 3, offsetX: '15%', offsetY: '5%' },
+  { rotation: -1, zIndex: 5, offsetX: '35%', offsetY: '15%' },
+  { rotation: 3, zIndex: 2, offsetX: '55%', offsetY: '8%' },
+  { rotation: -2, zIndex: 6, offsetX: '10%', offsetY: '35%' },
+  { rotation: 1, zIndex: 1, offsetX: '65%', offsetY: '30%' },
+  { rotation: -4, zIndex: 3, offsetX: '40%', offsetY: '45%' },
+  { rotation: 2, zIndex: 4, offsetX: '20%', offsetY: '60%' },
+];
+
 export function CampaignReport({
   report,
   keywords,
   onRegenerate,
   isRegenerating = false,
 }: CampaignReportProps) {
+  const router = useRouter();
   const [moodboardImages, setMoodboardImages] = useState<MoodboardImage[]>([]);
   const [isLoadingMoodboard, setIsLoadingMoodboard] = useState(false);
   const [moodboardSeed, setMoodboardSeed] = useState(0);
   const [isExporting, setIsExporting] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
+  
+  // Refs for scroll animations
+  const brandEssenceRef = useRef(null);
+  const culturalInsightRef = useRef(null);
+  const campaignIdeaRef = useRef(null);
+  const collaborationsRef = useRef(null);
+  const culturalSignalsRef = useRef(null);
+  
+  const culturalInsightInView = useInView(culturalInsightRef, { once: true, margin: "-100px" });
+  const collaborationsInView = useInView(collaborationsRef, { once: true, margin: "-100px" });
+  const culturalSignalsInView = useInView(culturalSignalsRef, { once: true, margin: "-100px" });
 
   // Fetch moodboard on mount
   useEffect(() => {
     fetchMoodboard();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchMoodboard = async () => {
@@ -126,173 +160,277 @@ export function CampaignReport({
   };
 
   return (
-    <div ref={reportRef}>
-      {/* Header with Actions */}
-      <div className="mb-8 flex flex-col items-start justify-between space-y-4 sm:flex-row sm:items-center sm:space-y-0">
-        <h2 className="text-2xl font-light tracking-tight text-white" style={{ fontFamily: 'var(--font-druk-wide)' }}>Campaign Strategy Report</h2>
-        <div className="flex items-center space-x-3">
+    <div ref={reportRef} className="min-h-screen bg-black">
+      {/* HERO SECTION - Diagonal Overlapping Images with Title */}
+      <section className="relative min-h-screen overflow-hidden bg-black">
+        {/* Images - Diagonal Overlapping Layout */}
+        <div className="absolute inset-0">
+          {isLoadingMoodboard && moodboardImages.length === 0 ? (
+            // Loading state
+            <div className="flex h-full items-center justify-center">
+              <div className="text-center">
+                <div className="mb-3 h-12 w-12 animate-spin rounded-full border-2 border-gray-700 border-t-white mx-auto" />
+                <p className="text-sm font-light text-gray-500">Loading visuals...</p>
+              </div>
+            </div>
+          ) : (
+            moodboardImages.slice(0, 8).map((image, idx) => {
+              const position = IMAGE_POSITIONS[idx] || IMAGE_POSITIONS[0];
+              return (
+                <motion.div
+                  key={image.id}
+                  initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{
+                    duration: 0.7,
+                    delay: idx * 0.15,
+                    ease: [0.25, 0.46, 0.45, 0.94],
+                  }}
+                  className="group absolute overflow-hidden shadow-2xl"
+                  style={{
+                    left: position.offsetX,
+                    top: position.offsetY,
+                    width: '280px',
+                    height: '380px',
+                    transform: `rotate(${position.rotation}deg)`,
+                    zIndex: position.zIndex,
+                  }}
+                >
+                  <img
+                    src={image.url}
+                    alt={image.alt}
+                    className="h-full w-full object-cover transition-all duration-700 group-hover:scale-110"
+                    style={{
+                      transform: `rotate(${-position.rotation}deg) scale(1.1)`,
+                    }}
+                  />
+                  {/* Subtle overlay on each image */}
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-700" />
+                </motion.div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Dark Gradient Overlay - Lighter */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black pointer-events-none" />
+
+        {/* Campaign Title - Centered */}
+        <div className="absolute inset-0 z-50 flex items-center justify-center px-6" style={{ fontFamily: 'var(--font-druk-wide)' }}>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="text-center"
+            style={{ mixBlendMode: 'lighten' }}
+          >
+            <h1 className="text-5xl font-bold uppercase leading-tight tracking-wider text-white md:text-6xl lg:text-7xl xl:text-8xl">
+              {report.campaignIdea.title}
+            </h1>
+          </motion.div>
+        </div>
+
+        {/* Action Buttons - Top Right */}
+        <div className="absolute right-6 top-6 z-10 flex items-center space-x-3">
           <button
             onClick={onRegenerate}
             disabled={isRegenerating}
-            className="rounded-full border border-gray-700 bg-transparent px-6 py-2 text-sm font-light tracking-wide text-gray-400 transition-all duration-300 hover:border-white hover:text-white disabled:opacity-50"
+            className="rounded-full border border-gray-700 bg-black/50 px-6 py-2 text-sm font-light tracking-wide text-gray-300 backdrop-blur-sm transition-all duration-300 hover:border-white hover:bg-black/70 hover:text-white disabled:opacity-50"
           >
             {isRegenerating ? 'Regenerating...' : 'Regenerate'}
           </button>
           <button
             onClick={handleExportPDF}
             disabled={isExporting}
-            className="rounded-full border border-white bg-transparent px-6 py-2 text-sm font-light tracking-wide text-white transition-all duration-300 hover:bg-white hover:text-black disabled:opacity-50"
+            className="rounded-full border border-white bg-black/50 px-6 py-2 text-sm font-light tracking-wide text-white backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-black disabled:opacity-50"
           >
-            {isExporting ? 'Exporting...' : 'Export Deck (PDF)'}
+            {isExporting ? 'Exporting...' : 'Export PDF'}
           </button>
         </div>
-      </div>
 
-      {/* Two-Column Layout: Report (left) + Moodboard (right) */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
-        {/* Left Column: Strategy Report (3/5) */}
-        <div className="lg:col-span-3">
-          <div className="space-y-8 border border-gray-800 bg-white/[0.03] p-8 shadow-2xl lg:p-12">
-            {/* Campaign Title */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
+        {/* Scroll Indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 1.2 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        >
+          <div className="flex flex-col items-center space-y-2">
+            <span className="text-xs font-light uppercase tracking-widest text-gray-400">
+              Scroll to explore
+            </span>
+            <motion.svg
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="h-6 w-6 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <h3 className="font-serif text-4xl font-normal leading-tight text-white md:text-5xl">
-                {report.campaignIdea.title}
-              </h3>
-              <p className="mt-4 text-lg font-light leading-relaxed text-gray-300">
-                {report.campaignIdea.description}
-              </p>
-            </motion.div>
-
-            <div className="border-t border-gray-800" />
-
-            {/* Brand Essence Section */}
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <h4 className="mb-3 text-xs font-light uppercase tracking-widest text-gray-500">
-                Brand Essence
-              </h4>
-              <p className="text-base font-light leading-relaxed text-gray-200">
-                {report.brandEssence}
-              </p>
-            </motion.section>
-
-            {/* Cultural Insight Section */}
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <h4 className="mb-3 text-xs font-light uppercase tracking-widest text-gray-500">
-                Cultural Insight
-              </h4>
-              <p className="whitespace-pre-line text-base font-light leading-relaxed text-gray-200">
-                {report.culturalInsight}
-              </p>
-            </motion.section>
-
-            {/* Potential Collaborations Section */}
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <h4 className="mb-4 text-xs font-light uppercase tracking-widest text-gray-500">
-                Potential Collaborations
-              </h4>
-              <div className="space-y-6">
-                {report.potentialCollaborations.map((communityCollab, idx) => (
-                  <div key={idx} className="border-l-2 border-gray-700 pl-6">
-                    <h5 className="mb-3 text-lg font-light text-white">
-                      {communityCollab.communityName || communityCollab.communityId}
-                    </h5>
-                    <div className="space-y-4">
-                      {communityCollab.collaborations.map((collab, collabIdx) => (
-                        <div
-                          key={collabIdx}
-                          className="rounded border border-gray-800 bg-white/[0.02] p-4"
-                        >
-                          <div className="mb-2 flex items-center justify-between">
-                            <span className="font-light text-white">{collab.engagementType}</span>
-                            <span className="text-sm font-light text-gray-400">
-                              £{collab.budget.toLocaleString()}
-                            </span>
-                          </div>
-                          <p className="mb-3 text-sm font-light leading-relaxed text-gray-300">
-                            {collab.description}
-                          </p>
-                          {collab.nonMonetaryOfferings.length > 0 && (
-                            <div className="flex flex-wrap gap-2">
-                              {collab.nonMonetaryOfferings.map((offering, offerIdx) => (
-                                <span
-                                  key={offerIdx}
-                                  className="border border-gray-700 bg-transparent px-2 py-1 text-xs font-light text-gray-400"
-                                >
-                                  {offering}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.section>
-
-            {/* Next Steps Section */}
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              <h4 className="mb-4 text-xs font-light uppercase tracking-widest text-gray-500">
-                Next Steps
-              </h4>
-              <ul className="space-y-3">
-                {report.nextSteps.map((step, idx) => (
-                  <li key={idx} className="flex items-start space-x-3">
-                    <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-white" />
-                    <span className="flex-1 text-base font-light text-gray-200">{step}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.section>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+              />
+            </motion.svg>
           </div>
+        </motion.div>
+      </section>
 
-          {/* Footer note */}
-          <p className="mt-4 text-xs font-light text-gray-700">
-            Generated by AI · Review and customize before presenting to stakeholders
+      {/* CAMPAIGN STRATEGY DESCRIPTION */}
+      <section className="mx-auto max-w-5xl px-6 py-24">
+        {/* Campaign Description */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-16 text-center"
+        >
+          <p className="text-xl font-light leading-relaxed text-white md:text-2xl">
+            {report.campaignIdea.description}
           </p>
-        </div>
+        </motion.div>
 
-        {/* Right Column: Moodboard (2/5) */}
-        <div className="lg:col-span-2">
-          <div className="sticky top-8">
-            {isLoadingMoodboard && moodboardImages.length === 0 ? (
-              <div className="flex h-64 items-center justify-center border border-gray-800 bg-white/[0.02]">
-                <div className="text-center">
-                  <div className="mb-3 h-8 w-8 animate-spin rounded-full border-2 border-gray-700 border-t-white mx-auto" />
-                  <p className="text-sm font-light text-gray-500">Loading moodboard...</p>
+        {/* Cultural Insight */}
+        <motion.div
+          ref={culturalInsightRef}
+          initial={{ opacity: 0, y: 40 }}
+          animate={culturalInsightInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="mb-16 px-12 py-8"
+        >
+          <h2 className="mb-6 text-xs font-light uppercase tracking-[0.2em] text-[#b3b3b3]">
+            Cultural Insight
+          </h2>
+          <p className="whitespace-pre-line text-lg font-light leading-relaxed text-white">
+            {report.culturalInsight.description}
+          </p>
+        </motion.div>
+
+
+
+        {/* Market Trends / Cultural Signals */}
+        <motion.div
+          ref={culturalSignalsRef}
+          initial={{ opacity: 0, y: 40 }}
+          animate={culturalSignalsInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="mb-24 px-12 py-8"
+        >
+          <h2 className="mb-8 text-xs font-light uppercase tracking-[0.2em] text-[#b3b3b3]">
+            Market Trends
+          </h2>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {report.culturalInsight.metrics.map((metric, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                animate={culturalSignalsInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="rounded border border-[#333] bg-[#111] p-6 transition-shadow duration-300 hover:shadow-[0_0_12px_rgba(255,255,255,0.05)]"
+              >
+                <h3 className="mb-2 text-lg font-light text-white">{metric.trend}</h3>
+                <p className="mb-4 text-3xl font-light text-white">{metric.metric}</p>
+                <p className="text-sm font-light leading-relaxed text-gray-400">
+                  {metric.summary}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Potential Collaborations */}
+        <motion.div
+          ref={collaborationsRef}
+          initial={{ opacity: 0, y: 40 }}
+          animate={collaborationsInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="mb-24 px-12 py-8"
+        >
+          <h2 className="mb-8 text-xs font-light uppercase tracking-[0.2em] text-[#b3b3b3]">
+            Potential Collaborations
+          </h2>
+          <div className="space-y-8">
+            {report.potentialCollaborations.map((communityCollab, idx) => (
+              <div key={idx} className="border-l-2 border-[#333] pl-8">
+                <h3 className="mb-4 text-xl font-light text-white">
+                  {communityCollab.communityName || communityCollab.communityId}
+                </h3>
+                <div className="space-y-6">
+                  {communityCollab.collaborations.map((collab, collabIdx) => (
+                    <div
+                      key={collabIdx}
+                      className="rounded border border-[#333] bg-[#111] p-6 transition-shadow duration-300 hover:shadow-[0_0_12px_rgba(255,255,255,0.05)]"
+                    >
+                      <div className="mb-3 flex items-center justify-between">
+                        <span className="font-light text-white">{collab.engagementType}</span>
+                        <span className="text-sm font-light text-gray-400">
+                          £{collab.budget.toLocaleString()}
+                        </span>
+                      </div>
+                      <p className="mb-4 text-base font-light leading-relaxed text-gray-300">
+                        {collab.description}
+                      </p>
+                      {collab.nonMonetaryOfferings.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {collab.nonMonetaryOfferings.map((offering, offerIdx) => (
+                            <span
+                              key={offerIdx}
+                              className="border border-gray-700 bg-transparent px-3 py-1 text-xs font-light text-gray-400"
+                            >
+                              {offering}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
-            ) : (
-              <MoodboardGrid
-                images={moodboardImages}
-                onRegenerate={handleRegenerateMoodboard}
-                isRegenerating={isLoadingMoodboard}
-              />
-            )}
+            ))}
           </div>
+        </motion.div>
+      </section>
+
+      {/* BOTTOM CTA */}
+      <section className="border-t border-[#333] px-6 py-24">
+        <div className="mx-auto max-w-4xl text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <p className="mb-8 text-xs font-light uppercase tracking-[0.2em] text-gray-500">
+              Generated by AI · Review and customize before presenting to stakeholders
+            </p>
+            <button
+              onClick={() => router.push('/communities')}
+              className="group inline-flex items-center space-x-3 text-2xl font-light text-white transition-all duration-300 hover:text-gray-300"
+            >
+              <span className="border-b border-transparent group-hover:border-white">
+                Explore Communities
+              </span>
+              <motion.svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                whileHover={{ x: 5 }}
+                transition={{ duration: 0.2 }}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </motion.svg>
+            </button>
+          </motion.div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

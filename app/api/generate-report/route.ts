@@ -37,9 +37,17 @@ interface CommunityCollaboration {
   collaborations: Collaboration[];
 }
 
+interface CulturalMetric {
+  trend: string;
+  metric: string;
+  summary: string;
+}
+
 interface CampaignReport {
-  brandEssence: string;
-  culturalInsight: string;
+  culturalInsight: {
+    description: string;
+    metrics: CulturalMetric[];
+  };
   campaignIdea: {
     title: string;
     description: string;
@@ -49,13 +57,19 @@ interface CampaignReport {
 }
 
 const SYSTEM_PROMPT = `You are a creative strategist at an AI PR agency helping brands design community-led campaigns. Given the brand info, write a concise strategy report with sections:
-- Brand Essence: Summarize the brand profile details passed in as input into something in the voice of a PR agency looking to inspire and establish connection to the marketing lead
-- Cultural Insight: 1-2 paragraphs on the cultural trend as if you're a cultural trend analyst, include market metrics
+
+- Cultural Insight: Provide a 2-3 paragraph description of the relevant market trend as a cultural trend analyst, then generate 3-4 supporting metrics. Each metric should have:
+  * trend: name of the micro-trend (e.g., "Urban Exploration", "Community-Led Experiences")
+  * metric: the statistic (e.g., "+42% YoY", "1.3M mentions", "68% growth")
+  * summary: 1-2 sentence explanation of what this means
+
 - Campaign Idea: A few sentences on the campaign strategy. Inspire in the voice of a PR agency.
+
 - Potential Collaborations: A list of collaborations it can organize with communities from PLACE Connect's network/database with details on the engagement that best fits the campaign idea and strategy
+
 - Next Steps: Action items, something that grounds this idea and makes it seem more feasible.
 
-Make it punchy, poetic, and brand-world ready. Output JSON with keys: brandEssence, culturalInsight, campaignIdea (object with title and description), potentialCollaborations (array<CommunityCollaboration>), nextSteps (array).
+Make it punchy, poetic, and brand-world ready. Output JSON with keys: culturalInsight (object with description string and metrics array), campaignIdea (object with title and description), potentialCollaborations (array<CommunityCollaboration>), nextSteps (array).
 
 The schema for each CommunityCollaboration is:
 {
@@ -168,8 +182,21 @@ Generate a creative campaign strategy report for this brand.`;
 function extractReportFromText(text: string): CampaignReport {
   // Simple extraction logic - in production, you'd want more robust parsing
   return {
-    brandEssence: extractSection(text, 'Brand Essence'),
-    culturalInsight: extractSection(text, 'Cultural Insight'),
+    culturalInsight: {
+      description: extractSection(text, 'Cultural Insight'),
+      metrics: [
+        {
+          trend: 'Urban Exploration',
+          metric: '+42% YoY',
+          summary: 'Growing interest in city-based adventure content blending style and fitness.',
+        },
+        {
+          trend: 'Community-Led Experiences',
+          metric: '+68%',
+          summary: 'Consumers prefer authentic events organized by peers over traditional PR activations.',
+        },
+      ],
+    },
     campaignIdea: {
       title: 'Custom Campaign',
       description: extractSection(text, 'Campaign Idea'),
@@ -211,10 +238,36 @@ function getMockReport(
 
   if (isIntellectual) {
     return {
-      brandEssence:
-        'You are a streetwear brand inspired by creative outsiders, blending analog culture with contemporary fashion.',
-      culturalInsight:
-        'Cities are seeing a revival of analog communal activities, with chess clubs experiencing a 67% growth in attendance over the past two years. This trend reflects a desire for intentional, screen-free social connection among urban millennials and Gen Z. Chess nights in cafes and bars have become cultural touchstones, merging intellectual pursuit with social atmosphere.',
+      culturalInsight: {
+        description:
+          'Cities are seeing a revival of analog communal activities, with chess clubs experiencing remarkable growth. This trend reflects a desire for intentional, screen-free social connection among urban millennials and Gen Z. Chess nights in cafes and bars have become cultural touchstones, merging intellectual pursuit with social atmosphere. The movement represents a broader shift toward mindful leisure and authentic face-to-face interaction in an increasingly digital world.',
+        metrics: [
+          {
+            trend: 'Analog Social Revival',
+            metric: '+67% growth',
+            summary:
+              'Chess club attendance has surged over the past two years as young professionals seek screen-free social experiences.',
+          },
+          {
+            trend: 'Intellectual Leisure',
+            metric: '2.4M TikTok views',
+            summary:
+              'Chess content on social media has exploded, with #ChessClub trending among Gen Z creators.',
+          },
+          {
+            trend: 'Cafe Culture 2.0',
+            metric: '+34% venues',
+            summary:
+              'Urban cafes and bars hosting chess nights have increased significantly, creating new third spaces.',
+          },
+          {
+            trend: 'Mindful Competition',
+            metric: '78% preference',
+            summary:
+              'Young consumers prefer strategic games over passive entertainment for social gatherings.',
+          },
+        ],
+      },
       campaignIdea: {
         title: 'Checkmate & Chucks',
         description:
@@ -271,10 +324,36 @@ function getMockReport(
 
   if (isOutdoor) {
     return {
-      brandEssence:
-        'You are an active, authentic brand that connects urban creators with sustainable outdoor experiences through bold storytelling.',
-      culturalInsight:
-        'The "urban hiking" movement has exploded, with 54% of young Londoners seeking nature experiences within city limits. This trend merges wellness, photography, and community building. Instagram hashtag #UrbanHiking has grown 200% year-over-year, driven by creators seeking accessible outdoor content and authentic connection.',
+      culturalInsight: {
+        description:
+          'The "urban hiking" movement has exploded as young city dwellers seek nature experiences without leaving metropolitan areas. This trend merges wellness, photography, and community building into a cohesive lifestyle movement. Unlike traditional outdoor recreation, urban hiking emphasizes accessibility, spontaneity, and social documentation. The movement represents a fundamental shift in how urbanites interact with their environment, transforming overlooked green spaces into destinations.',
+        metrics: [
+          {
+            trend: 'Metropolitan Nature Seekers',
+            metric: '54% of millennials',
+            summary:
+              'Over half of young Londoners actively seek nature experiences within city limits weekly.',
+          },
+          {
+            trend: 'Social Outdoor Content',
+            metric: '+200% YoY',
+            summary:
+              'Instagram hashtag #UrbanHiking has doubled year-over-year, driven by creator content.',
+          },
+          {
+            trend: 'Accessible Adventure',
+            metric: '3.2M searches',
+            summary:
+              'Monthly searches for "hiking near me" and "urban trails" have tripled since 2022.',
+          },
+          {
+            trend: 'Community Wellness',
+            metric: '+89% group hikes',
+            summary:
+              'Organized group hiking events in cities have nearly doubled as people seek social fitness.',
+          },
+        ],
+      },
       campaignIdea: {
         title: 'Summit & Streets',
         description:
@@ -331,8 +410,35 @@ function getMockReport(
 
   // Default generic response
   return {
-    brandEssence: brandEssence,
-    culturalInsight: `${audience} represents a growing demographic seeking authentic brand experiences that align with their values. Recent studies show 73% of this audience prefers brands that demonstrate genuine community engagement. The cultural landscape is shifting toward intimate, experience-driven connections rather than traditional advertising.`,
+    culturalInsight: {
+      description: `${audience} represents a growing demographic seeking authentic brand experiences that align with their values. The cultural landscape is shifting toward intimate, experience-driven connections rather than traditional advertising. This audience values peer-organized events, grassroots storytelling, and brands that demonstrate genuine community engagement. They're moving away from influencer marketing toward real stories from real people in their communities.`,
+      metrics: [
+        {
+          trend: 'Authenticity Premium',
+          metric: '73% preference',
+          summary:
+            'Consumers now prefer brands that demonstrate genuine community engagement over traditional advertising.',
+        },
+        {
+          trend: 'Experience Economy',
+          metric: '+45% spending',
+          summary:
+            'Young consumers allocate more budget to experiences and events than material goods.',
+        },
+        {
+          trend: 'Peer-Led Activation',
+          metric: '2.8x engagement',
+          summary:
+            'Community-organized events drive nearly 3x higher engagement than brand-led activations.',
+        },
+        {
+          trend: 'Grassroots Content',
+          metric: '1.3M shares',
+          summary:
+            'User-generated content from micro-communities outperforms professional branded content.',
+        },
+      ],
+    },
     campaignIdea: {
       title: 'Cultural Connections',
       description:
