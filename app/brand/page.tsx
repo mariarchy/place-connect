@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -56,7 +56,7 @@ const questions = [
   },
 ];
 
-export default function BrandDiscoveryPage() {
+function BrandDiscoveryContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -388,5 +388,17 @@ export default function BrandDiscoveryPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function BrandDiscoveryPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#0b0b0b] px-6 py-8 flex items-center justify-center">
+        <div className="text-white text-lg font-light">Loading...</div>
+      </div>
+    }>
+      <BrandDiscoveryContent />
+    </Suspense>
   );
 }

@@ -97,6 +97,7 @@ export function BrandSummaryCard({ summary, onEdit }: BrandSummaryCardProps) {
       <div className="space-y-12">
         <CampaignReport
           report={campaignReport}
+          keywords={summary.keywords}
           onRegenerate={handleRegenerate}
           isRegenerating={isGenerating}
         />
