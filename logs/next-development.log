@@ -1,0 +1,32 @@
+[00:01:59.873] Server  ERROR   Error: Cannot find module 'next/dist/compiled/cookie'
+Require stack:
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/api-utils/get-cookie-parser.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/shared/lib/router/utils/prepare-destination.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/shared/lib/router/utils/middleware-route-matcher.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/lib/router-utils/filesystem.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/lib/router-server.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/lib/start-server.js
+[00:01:59.882] Server  ERROR   Error: Cannot find module 'next/dist/compiled/cookie'
+Require stack:
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/api-utils/get-cookie-parser.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/shared/lib/router/utils/prepare-destination.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/shared/lib/router/utils/middleware-route-matcher.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/lib/router-utils/filesystem.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/lib/router-server.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/lib/start-server.js
+[00:01:59.899] Server  ERROR   Error: Cannot find module 'next/dist/compiled/cookie'
+Require stack:
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/api-utils/get-cookie-parser.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/shared/lib/router/utils/prepare-destination.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/shared/lib/router/utils/middleware-route-matcher.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/lib/router-utils/filesystem.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/lib/router-server.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/lib/start-server.js
+[00:01:59.906] Server  ERROR   Error: Cannot find module 'next/dist/compiled/cookie'
+Require stack:
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/api-utils/get-cookie-parser.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/shared/lib/router/utils/prepare-destination.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/shared/lib/router/utils/middleware-route-matcher.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/lib/router-utils/filesystem.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/lib/router-server.js
+- /Users/marissaliu/Personal/culture/culturemesh/node_modules/next/dist/server/lib/start-server.js
