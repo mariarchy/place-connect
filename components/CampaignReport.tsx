@@ -72,9 +72,7 @@ export function CampaignReport({
   const reportRef = useRef<HTMLDivElement>(null);
   
   // Refs for scroll animations
-  const brandEssenceRef = useRef(null);
   const culturalInsightRef = useRef(null);
-  const campaignIdeaRef = useRef(null);
   const collaborationsRef = useRef(null);
   const culturalSignalsRef = useRef(null);
   
@@ -213,10 +211,10 @@ export function CampaignReport({
         </div>
 
         {/* Dark Gradient Overlay - Lighter */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black pointer-events-none" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/40 via-black/50 to-black pointer-events-none" />
 
         {/* Campaign Title - Centered */}
-        <div className="absolute inset-0 z-50 flex items-center justify-center px-6" style={{ fontFamily: 'var(--font-druk-wide)' }}>
+        <div className="absolute inset-0 z-50 flex items-center justify-center px-6 pointer-events-none" style={{ fontFamily: 'var(--font-druk-wide)' }}>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -231,7 +229,7 @@ export function CampaignReport({
         </div>
 
         {/* Action Buttons - Top Right */}
-        <div className="absolute right-6 top-6 z-10 flex items-center space-x-3">
+        <div className="absolute right-6 top-6 z-[60] flex items-center space-x-3">
           <button
             onClick={onRegenerate}
             disabled={isRegenerating}

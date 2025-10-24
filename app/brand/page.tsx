@@ -234,6 +234,8 @@ function BrandDiscoveryContent() {
   const handleEdit = () => {
     setViewMode('questions');
     setCurrentStep(0);
+    // Clear campaign report when editing
+    sessionStorage.removeItem('place-connect-campaign-report');
   };
 
   const handleClearAndRestart = () => {

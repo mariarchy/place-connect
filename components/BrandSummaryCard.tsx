@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CampaignReport } from './CampaignReport';
 
 interface BrandSummary {
@@ -20,9 +20,17 @@ interface BrandSummaryCardProps {
   onEdit: () => void;
 }
 
+interface CulturalMetric {
+  trend: string;
+  metric: string;
+  summary: string;
+}
+
 interface CampaignReportData {
-  brandEssence: string;
-  culturalInsight: string;
+  culturalInsight: {
+    description: string;
+    metrics: CulturalMetric[];
+  };
   campaignIdea: {
     title: string;
     description: string;
@@ -40,11 +48,14 @@ interface CampaignReportData {
   nextSteps: string[];
 }
 
+const CAMPAIGN_REPORT_STORAGE_KEY = 'place-connect-campaign-report';
+
 export function BrandSummaryCard({ summary, onEdit }: BrandSummaryCardProps) {
   const [showJson, setShowJson] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [campaignReport, setCampaignReport] = useState<CampaignReportData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // JSON output for Step 3
   const jsonOutput = {
@@ -90,6 +101,7 @@ export function BrandSummaryCard({ summary, onEdit }: BrandSummaryCardProps) {
 
   const handleRegenerate = () => {
     setCampaignReport(null);
+    sessionStorage.removeItem(CAMPAIGN_REPORT_STORAGE_KEY);
     handleGenerateReport();
   };
 
