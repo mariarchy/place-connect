@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CultureMesh — AI-Powered Culture Campaigns",
+  title: "PLACE Connect — Brand Discovery Platform",
   description: "Create moodboard-style campaigns and connect with grassroots communities",
 };
 

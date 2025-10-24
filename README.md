@@ -1,30 +1,22 @@
-# CultureMesh
+# PLACE Connect - Step 1: Brand Discovery UI
 
-AI-powered culture campaign builder that connects brands with grassroots communities.
+A cinematic conversational upload UI for marketing leads to describe their brand, built with Next.js, React, TailwindCSS, and Framer Motion.
 
-## 🎯 Overview
+## Features
 
-CultureMesh is a flashy, AI-powered web prototype that lets marketing users (e.g., e-tail marketing leads at Salomon) create moodboard-style campaigns and instantly get:
+- **Sequential Q&A Interface**: 6 guided prompts presented as animated cards
+- **Live Proto Brief**: Real-time summary panel that updates as users type
+- **File Upload**: Support for PDF, PPT, and images with mock keyword extraction
+- **Dark DICE-like Aesthetic**: Black background (#0b0b0b), white text, subtle gray accents
+- **Smooth Animations**: Framer Motion transitions between questions
+- **Responsive Layout**: 60/40 split (chat/brief) on desktop, stacked on mobile
 
-- An AI-generated PR campaign brief
-- A list of matching grassroots communities
-- A visual "connection animation" between the brand and community
-
-**Visual Style**: Cross between Figma, DICE, and Notion AI — sleek, motion-rich, and conceptually magical.
-
-## 🛠️ Tech Stack
-
-- **Frontend**: Next.js 16 (App Router)
-- **Styling**: TailwindCSS + Framer Motion
-- **AI**: OpenAI GPT-4o API (coming in Phase 3)
-- **Deployment**: Netlify
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ and npm
-- (Later) OpenAI API key for AI brief generation
+- Node.js 18+ 
+- npm or yarn
 
 ### Installation
 
@@ -38,94 +30,122 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the app.
+Open [http://localhost:3000](http://localhost:3000) to view the landing page.  
+Navigate to [http://localhost:3000/moodboard](http://localhost:3000/moodboard) for the brand discovery interface.
 
-## 📦 Deployment to Netlify
-
-### Option 1: Deploy via Netlify CLI
+### Build for Production
 
 ```bash
-# Install Netlify CLI
-npm i -g netlify-cli
-
-# Login to Netlify
-netlify login
-
-# Deploy
-netlify deploy --prod
+npm run build
+npm start
 ```
 
-### Option 2: Deploy via Netlify Dashboard
-
-1. Push your code to GitHub
-2. Go to [netlify.com](https://netlify.com)
-3. Click "Add new site" → "Import an existing project"
-4. Connect your GitHub repository
-5. Click "Deploy site"
-
-### Option 3: Deploy via GitHub Integration
-
-1. Push your code to GitHub
-2. Netlify will auto-detect the Next.js framework
-3. Automatic deployments on every push to main
-
-### Environment Variables (for Phase 3+)
-
-Add these to your Netlify site settings under "Environment variables":
+## Project Structure
 
 ```
-OPENAI_API_KEY=your_openai_api_key_here
+/app
+  /moodboard
+    page.tsx          # Main moodboard Q&A page
+  layout.tsx          # Root layout with fonts
+  page.tsx            # Landing page
+  globals.css         # Global styles and theme
+
+/components
+  QuestionCard.tsx    # Animated question card component
+  ProtoBrief.tsx      # Live-updating summary panel
+
+/lib
+  fileMapping.ts      # Mock file-to-keyword mapping logic
 ```
 
-## 🎬 User Flow
+## Mock File Parsing
 
-### Phase 1 (Current): Frame + Scaffolding ✅
+The demo includes simple keyword extraction based on filenames:
 
-- Landing page with DICE-inspired aesthetic
-- Moodboard page with drag-and-drop image upload
-- Basic routing and navigation
-- Ready for Netlify deployment
+- Files containing "salomon" or "sneaker" → tagged as "outdoor / sport"
+- Files containing "chess" → tagged as "intellectual / quiet-night"
+- Other files → no automatic keywords
 
-### Phase 2 (Next): AI Integration
+### Editing the Mapping
 
-- OpenAI GPT-4o integration for brief generation
-- Loading animations and shimmer effects
-- Rich, scrollable brief display
+To customize the filename-to-keyword logic, edit `/lib/fileMapping.ts`:
 
-### Phase 3: Community Matching
+```typescript
+export function mapFilenamesToKeywords(fileNames: string[]): string[] {
+  const keywords: string[] = [];
 
-- Hardcoded community data
-- Smart matching algorithm
-- Community cards with collaboration CTAs
+  fileNames.forEach((fileName) => {
+    const lowerName = fileName.toLowerCase();
 
-### Phase 4: Connection Animation
+    // Add your custom mappings here
+    if (lowerName.includes('your-keyword')) {
+      keywords.push('your-tag');
+    }
+  });
 
-- Framer Motion partnership animation
-- Sparkle/glow effects
-- Success modal
-
-## 📁 Project Structure
-
-```
-culturemesh/
-├── app/
-│   ├── page.tsx              # Landing page
-│   ├── moodboard/
-│   │   └── page.tsx          # Moodboard builder
-│   ├── layout.tsx            # Root layout
-│   └── globals.css           # Global styles
-├── public/                   # Static assets
-├── package.json
-└── README.md
+  return keywords;
+}
 ```
 
-## 🎨 Design Philosophy
+## Design System
 
-- **Black & White Aesthetic**: Minimal DICE-inspired design
-- **Motion-Rich**: Smooth Framer Motion animations
-- **Breathing Room**: Clean typography with lots of space
-- **Conceptually Magical**: AI-powered features feel futuristic yet accessible
+### Colors
+- Background: `#0b0b0b`
+- Primary Text: `#ffffff`
+- Secondary Text: `#BDBDBD`
+- Borders: `#374151` (gray-700)
 
-## 📝 License
+### Typography
+- Body: Inter (variable font)
+- Proto Brief Heading: Playfair Display (serif)
 
-This is a prototype project for demonstration purposes.
+### Spacing
+- Large spacing throughout for breathing room
+- Pill-shaped buttons with transparent fills
+
+## State Management
+
+Uses simple React `useState` with the following shape:
+
+```typescript
+{
+  mission: string,
+  tone: string,
+  communities: string,
+  inspiration: string,
+  budget: string,
+  fileNames: string[]
+}
+```
+
+No external state library required for this demo.
+
+## Acceptance Criteria
+
+✅ /moodboard page loads and is responsive  
+✅ Sequential Q&A works with Back/Next navigation  
+✅ Smooth Framer Motion transitions between questions  
+✅ Proto Brief updates in real-time as user types  
+✅ File upload accepts multiple files and displays filenames  
+✅ Mock keyword mapping runs on file upload  
+✅ Dark DICE-like aesthetic implemented  
+✅ Accessible components with proper labels and keyboard navigation
+
+## Notes
+
+- No authentication or database
+- All data stored in local component state
+- File parsing is mock/demo only (no actual PDF/PPT extraction)
+- Designed for demo purposes with placeholder content
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **UI Library**: React 19
+- **Styling**: TailwindCSS 4
+- **Animations**: Framer Motion 12
+- **Language**: TypeScript 5
+
+## License
+
+Private - PLACE Connect Hack Demo
