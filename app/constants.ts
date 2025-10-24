@@ -1,0 +1,1 @@
+export const BRAND_ANSWERS_STORAGE_KEY = 'place-connect-brand-answers';

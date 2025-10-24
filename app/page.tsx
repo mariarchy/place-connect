@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { BRAND_ANSWERS_STORAGE_KEY } from '@/app/constants';
 
 export default function Home() {
   return (
@@ -42,10 +43,14 @@ export default function Home() {
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           <Link
-            href="/moodboard"
+            href="/brand"
+            onClick={() => {
+              // Clear any existing session data when starting fresh from landing page
+              sessionStorage.removeItem(BRAND_ANSWERS_STORAGE_KEY);
+            }}
             className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border border-white bg-transparent px-12 py-4 text-base font-light tracking-wider text-white transition-all duration-300 hover:bg-white hover:text-black"
           >
-            <span className="relative z-10">Start Brand Discovery</span>
+            <span className="relative z-10">Connect with Culture</span>
             <motion.div
               className="absolute inset-0 bg-white"
               initial={{ scaleX: 0 }}
