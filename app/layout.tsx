@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PLACE Connect — Brand Discovery Platform",
-  description: "Create moodboard-style campaigns and connect with grassroots communities",
+  title: "PLACE Connect — Connect with Culture",
+  description: "Connect with authentic communities through culture",
 };
 
 export default function RootLayout({

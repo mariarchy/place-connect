@@ -56,7 +56,7 @@ const questions = [
   },
 ];
 
-export default function MoodboardPage() {
+export default function BrandDiscoveryPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   

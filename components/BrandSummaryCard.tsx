@@ -1,7 +1,8 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
+import { CampaignReport } from './CampaignReport';
 
 interface BrandSummary {
   brandName: string | null;
@@ -18,8 +19,31 @@ interface BrandSummaryCardProps {
   onEdit: () => void;
 }
 
+interface CampaignReportData {
+  brandEssence: string;
+  culturalInsight: string;
+  campaignIdea: {
+    title: string;
+    description: string;
+  };
+  potentialCollaborations: {
+    communityId: string;
+    communityName?: string;
+    collaborations: {
+      engagementType: string;
+      budget: number;
+      nonMonetaryOfferings: string[];
+      description: string;
+    }[];
+  }[];
+  nextSteps: string[];
+}
+
 export function BrandSummaryCard({ summary, onEdit }: BrandSummaryCardProps) {
   const [showJson, setShowJson] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [campaignReport, setCampaignReport] = useState<CampaignReportData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // JSON output for Step 3
   const jsonOutput = {
@@ -28,6 +52,57 @@ export function BrandSummaryCard({ summary, onEdit }: BrandSummaryCardProps) {
     keywords: summary.keywords,
     audience: summary.audience,
   };
+
+  const handleGenerateReport = async () => {
+    setIsGenerating(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/generate-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          brandEssence: summary.brandEssence,
+          keywords: summary.keywords,
+          audience: summary.audience,
+          optionalFileNames: summary.fileKeywords,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate report');
+      }
+
+      const data = await response.json();
+      setCampaignReport(data);
+    } catch (err) {
+      console.error('Error generating report:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleRegenerate = () => {
+    setCampaignReport(null);
+    handleGenerateReport();
+  };
+
+  // If we have a campaign report, show it
+  if (campaignReport) {
+    return (
+      <div className="space-y-12">
+        <CampaignReport
+          report={campaignReport}
+          onRegenerate={handleRegenerate}
+          isRegenerating={isGenerating}
+        />
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -215,22 +290,74 @@ export function BrandSummaryCard({ summary, onEdit }: BrandSummaryCardProps) {
         )}
       </motion.div>
 
-      {/* Next Step CTA */}
+      {/* Generate Campaign Report CTA */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.6 }}
-        className="flex justify-center pt-8"
+        className="space-y-4 pt-8"
       >
-        <button
-          className="rounded-full border border-white bg-transparent px-12 py-4 text-base font-light tracking-wider text-white transition-all duration-300 hover:bg-white hover:text-black"
-          onClick={() => {
-            console.log('Ready for Step 3: AI Campaign Generation', jsonOutput);
-            alert('Step 3 coming soon: AI-powered campaign generation with Unsplash images');
-          }}
-        >
-          Continue to AI Generation
-        </button>
+        {/* Error Display */}
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mx-auto max-w-2xl rounded border border-red-900/50 bg-red-950/20 px-6 py-4 text-center"
+            >
+              <p className="text-sm font-light text-red-400">{error}</p>
+              <button
+                onClick={() => setError(null)}
+                className="mt-2 text-xs font-light text-red-500 underline"
+              >
+                Dismiss
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Generate Button or Loading State */}
+        <div className="flex justify-center">
+          {isGenerating ? (
+            <div className="flex flex-col items-center space-y-4">
+              {/* Shimmer Loading Animation */}
+              <div className="relative h-12 w-64 overflow-hidden rounded-full border border-gray-700 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900">
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                  animate={{
+                    x: ['-100%', '200%'],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: 'linear',
+                  }}
+                />
+              </div>
+              <p className="text-sm font-light italic text-gray-400">
+                Imagining the campaign…
+              </p>
+            </div>
+          ) : (
+            <button
+              className="group relative overflow-hidden rounded-full border border-white bg-transparent px-12 py-4 text-base font-light tracking-wider text-white transition-all duration-300 hover:bg-white hover:text-black"
+              onClick={handleGenerateReport}
+            >
+              <span className="relative z-10 flex items-center space-x-2">
+                <span>✨</span>
+                <span>Generate Campaign Report</span>
+              </span>
+            </button>
+          )}
+        </div>
+
+        {/* Hint text */}
+        {!isGenerating && (
+          <p className="text-center text-xs font-light text-gray-600">
+            AI will create a strategic campaign report with cultural insights and collaboration ideas
+          </p>
+        )}
       </motion.div>
     </motion.div>
   );
