@@ -6,6 +6,7 @@ import { CampaignReport } from './CampaignReport';
 
 interface BrandSummary {
   brandName: string | null;
+  brandWebsite: string | null;
   brandEssence: string;
   keywords: string[];
   audience: string;
@@ -48,6 +49,7 @@ export function BrandSummaryCard({ summary, onEdit }: BrandSummaryCardProps) {
   // JSON output for Step 3
   const jsonOutput = {
     brandName: summary.brandName,
+    brandWebsite: summary.brandWebsite,
     brandEssence: summary.brandEssence,
     keywords: summary.keywords,
     audience: summary.audience,
@@ -114,9 +116,21 @@ export function BrandSummaryCard({ summary, onEdit }: BrandSummaryCardProps) {
     >
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-light tracking-tight text-white md:text-4xl">
-          Brand Summary
-        </h1>
+        <div>
+          <h1 className="text-3xl font-light tracking-tight text-white md:text-4xl" style={{ fontFamily: 'var(--font-druk-wide)' }}>
+            {summary.brandName || 'Brand Summary'}
+          </h1>
+          {summary.brandWebsite && (
+            <a 
+              href={summary.brandWebsite} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="mt-2 text-sm font-light text-gray-400 hover:text-white transition-colors underline"
+            >
+              {summary.brandWebsite}
+            </a>
+          )}
+        </div>
         <button
           onClick={onEdit}
           className="rounded-full border border-gray-700 bg-transparent px-6 py-2 text-sm font-light tracking-wide text-gray-400 transition-all duration-300 hover:border-white hover:text-white"

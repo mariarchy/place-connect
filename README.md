@@ -60,7 +60,7 @@ Create a `.env.local` file in the root directory:
 
 ```bash
 # Required for AI Campaign Report Generation (Step 3a)
-GEMINI_API_KEY=your_gemini_api_key_here
+GOOGLE_GEMINI_API_KEY=your_gemini_api_key_here
 
 # Required for Visual Moodboard (Step 3b)
 UNSPLASH_ACCESS_KEY=your_unsplash_access_key_here

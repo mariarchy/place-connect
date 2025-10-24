@@ -98,10 +98,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Check for API key
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
     if (!apiKey) {
       // Return mock data if no API key (for development)
-      console.warn('No GEMINI_API_KEY found, returning mock data');
+      console.warn('No GOOGLE_GEMINI_API_KEY found, returning mock data');
       return NextResponse.json(getMockReport(brandEssence, keywords, audience));
     }
 

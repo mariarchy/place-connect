@@ -4,6 +4,8 @@
  */
 
 interface BrandAnswers {
+  brandName: string;
+  brandWebsite: string;
   mission: string;
   tone: string;
   communities: string;
@@ -14,6 +16,7 @@ interface BrandAnswers {
 
 interface BrandSummary {
   brandName: string | null;
+  brandWebsite: string | null;
   brandEssence: string;
   keywords: string[];
   audience: string;
@@ -133,7 +136,8 @@ export function synthesizeBrandSummary(
   const toneList = adjectives;
   
   return {
-    brandName: null, // Could be extracted from mission in future
+    brandName: answers.brandName || null,
+    brandWebsite: answers.brandWebsite || null,
     brandEssence,
     keywords,
     audience: communities || 'Culturally engaged communities',

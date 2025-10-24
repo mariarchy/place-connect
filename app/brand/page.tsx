@@ -8,10 +8,11 @@ import { QuestionCard } from '@/components/QuestionCard';
 import { ProtoBrief } from '@/components/ProtoBrief';
 import { BrandSummaryCard } from '@/components/BrandSummaryCard';
 import { mapFilenamesToKeywords } from '@/lib/fileMapping';
-import { synthesizeBrandSummary } from '@/lib/summarize';
 import { BRAND_ANSWERS_STORAGE_KEY } from '@/app/constants';
 
 interface BrandAnswers {
+  brandName: string;
+  brandWebsite: string;
   mission: string;
   tone: string;
   communities: string;
@@ -20,9 +21,30 @@ interface BrandAnswers {
   fileNames: string[];
 }
 
+interface BrandSummary {
+  brandName: string | null;
+  brandWebsite: string | null;
+  brandEssence: string;
+  keywords: string[];
+  audience: string;
+  tone: string[];
+  communities: string[];
+  fileKeywords: string[];
+}
+
 type ViewMode = 'questions' | 'review' | 'summary';
 
 const questions = [
+  {
+    id: 'brandName',
+    question: "What's your brand name?",
+    placeholder: 'e.g., PLACE Connect, Urban Outpost, Culture Lab...',
+  },
+  {
+    id: 'brandWebsite',
+    question: "What's your brand website?",
+    placeholder: 'e.g., https://placeconnect.com',
+  },
   {
     id: 'mission',
     question: "What's your brand's mission or core idea?",
@@ -69,6 +91,8 @@ function BrandDiscoveryContent() {
     urlStep ? parseInt(urlStep, 10) : 0
   );
   const [answers, setAnswers] = useState<BrandAnswers>({
+    brandName: '',
+    brandWebsite: '',
     mission: '',
     tone: '',
     communities: '',
@@ -77,6 +101,9 @@ function BrandDiscoveryContent() {
     fileNames: [],
   });
   const [isInitialized, setIsInitialized] = useState(false);
+  const [brandSummary, setBrandSummary] = useState<BrandSummary | null>(null);
+  const [isSynthesizing, setIsSynthesizing] = useState(false);
+  const [synthesisError, setSynthesisError] = useState<string | null>(null);
 
   // Load answers from sessionStorage on mount
   useEffect(() => {
@@ -172,8 +199,36 @@ function BrandDiscoveryContent() {
     }));
   };
 
-  const handleSummarize = () => {
-    setViewMode('summary');
+  const handleSummarize = async () => {
+    setIsSynthesizing(true);
+    setSynthesisError(null);
+
+    try {
+      const response = await fetch('/api/synthesize-brand', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          answers,
+          fileKeywords,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to synthesize brand summary');
+      }
+
+      const summary = await response.json();
+      setBrandSummary(summary);
+      setViewMode('summary');
+    } catch (err) {
+      console.error('Error synthesizing brand summary:', err);
+      setSynthesisError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsSynthesizing(false);
+    }
   };
 
   const handleEdit = () => {
@@ -184,6 +239,8 @@ function BrandDiscoveryContent() {
   const handleClearAndRestart = () => {
     sessionStorage.removeItem(BRAND_ANSWERS_STORAGE_KEY);
     setAnswers({
+      brandName: '',
+      brandWebsite: '',
       mission: '',
       tone: '',
       communities: '',
@@ -198,17 +255,15 @@ function BrandDiscoveryContent() {
   // Compute file keywords for Proto Brief
   const fileKeywords = mapFilenamesToKeywords(answers.fileNames);
 
-  // Generate brand summary
-  const brandSummary = synthesizeBrandSummary(answers, fileKeywords);
-
   // Render summary view
-  if (viewMode === 'summary') {
+  if (viewMode === 'summary' && brandSummary) {
     return (
       <div className="min-h-screen bg-[#0b0b0b] px-6 py-8">
         <nav className="mb-12">
           <Link
             href="/"
             className="text-lg font-light tracking-wide text-white transition-colors hover:text-gray-300"
+            style={{ fontFamily: 'var(--font-druk-wide)' }}
           >
             ← PLACE Connect
           </Link>
@@ -223,16 +278,17 @@ function BrandDiscoveryContent() {
   // Render review/CTA view
   if (viewMode === 'review') {
     return (
-      <div className="min-h-screen bg-[#0b0b0b] px-6 py-8">
+      <div className="min-h-screen bg-[#0b0b0b] px-6 py-8 flex flex-col">
         <nav className="mb-12">
           <Link
             href="/"
             className="text-lg font-light tracking-wide text-white transition-colors hover:text-gray-300"
+            style={{ fontFamily: 'var(--font-druk-wide)' }}
           >
             ← PLACE Connect
           </Link>
         </nav>
-        <main className="mx-auto max-w-4xl">
+        <main className="mx-auto max-w-4xl flex-1 flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -240,7 +296,7 @@ function BrandDiscoveryContent() {
             className="space-y-8 text-center"
           >
             <div>
-              <h1 className="mb-4 text-5xl font-light tracking-tight text-white md:text-6xl">
+              <h1 className="mb-4 text-5xl font-light tracking-tight text-white md:text-6xl" style={{ fontFamily: 'var(--font-druk-wide)' }}>
                 You're all set.
               </h1>
               <p className="text-xl font-light text-[#BDBDBD]">
@@ -293,6 +349,26 @@ function BrandDiscoveryContent() {
               </motion.div>
             </div>
 
+            {/* Error Display */}
+            <AnimatePresence>
+              {synthesisError && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mx-auto max-w-2xl rounded border border-red-900/50 bg-red-950/20 px-6 py-4 text-center"
+                >
+                  <p className="text-sm font-light text-red-400">{synthesisError}</p>
+                  <button
+                    onClick={() => setSynthesisError(null)}
+                    className="mt-2 text-xs font-light text-red-500 underline"
+                  >
+                    Dismiss
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -303,15 +379,37 @@ function BrandDiscoveryContent() {
               <button
                 onClick={handleEdit}
                 className="rounded-full border border-gray-700 bg-transparent px-8 py-3 text-sm font-light tracking-wide text-gray-400 transition-all duration-300 hover:border-white hover:text-white"
+                disabled={isSynthesizing}
               >
-                Go Back & Edit
+                Back
               </button>
-              <button
-                onClick={handleSummarize}
-                className="rounded-full border border-white bg-transparent px-12 py-4 text-base font-light tracking-wider text-white transition-all duration-300 hover:bg-white hover:text-black"
-              >
-                Summarize Brand
-              </button>
+              {isSynthesizing ? (
+                <div className="flex flex-col items-center space-y-4">
+                  <div className="relative h-12 w-64 overflow-hidden rounded-full border border-gray-700 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900">
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                      animate={{
+                        x: ['-100%', '200%'],
+                      }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: 'linear',
+                      }}
+                    />
+                  </div>
+                  <p className="text-sm font-light italic text-gray-400">
+                    Synthesizing your brand essence…
+                  </p>
+                </div>
+              ) : (
+                <button
+                  onClick={handleSummarize}
+                  className="rounded-full border border-white bg-transparent px-12 py-4 text-base font-light tracking-wider text-white transition-all duration-300 hover:bg-white hover:text-black"
+                >
+                  Summarise
+                </button>
+              )}
             </motion.div>
           </motion.div>
         </main>
@@ -327,6 +425,7 @@ function BrandDiscoveryContent() {
         <Link
           href="/"
           className="text-lg font-light tracking-wide text-white transition-colors hover:text-gray-300"
+          style={{ fontFamily: 'var(--font-druk-wide)' }}
         >
           ← PLACE Connect
         </Link>
@@ -377,6 +476,8 @@ function BrandDiscoveryContent() {
           {/* Right Column: Proto Brief (40%) */}
           <div className="lg:col-span-2">
             <ProtoBrief
+              brandName={answers.brandName}
+              brandWebsite={answers.brandWebsite}
               mission={answers.mission}
               tone={answers.tone}
               communities={answers.communities}

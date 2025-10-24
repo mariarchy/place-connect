@@ -129,7 +129,7 @@ export function CampaignReport({
     <div ref={reportRef}>
       {/* Header with Actions */}
       <div className="mb-8 flex flex-col items-start justify-between space-y-4 sm:flex-row sm:items-center sm:space-y-0">
-        <h2 className="text-2xl font-light tracking-tight text-white">Campaign Strategy Report</h2>
+        <h2 className="text-2xl font-light tracking-tight text-white" style={{ fontFamily: 'var(--font-druk-wide)' }}>Campaign Strategy Report</h2>
         <div className="flex items-center space-x-3">
           <button
             onClick={onRegenerate}

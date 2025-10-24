@@ -14,6 +14,7 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="text-xl font-light tracking-wide text-white"
+          style={{ fontFamily: 'var(--font-druk-wide)' }}
         >
           PLACE Connect
         </motion.div>
@@ -27,13 +28,11 @@ export default function Home() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="mb-8"
         >
-          <h1 className="mb-6 text-6xl font-light tracking-tight text-white sm:text-7xl md:text-8xl">
-            Where Brands
-            <br />
-            Meet Culture
+          <h1 className="mb-6 text-5xl font-light tracking-tight text-white sm:text-6xl md:text-7xl" style={{ fontFamily: 'var(--font-druk-wide)' }}>
+            Tap into<br />the culture.
           </h1>
           <p className="mx-auto max-w-2xl text-lg font-light leading-relaxed text-[#BDBDBD] sm:text-xl">
-            A cinematic conversational platform for marketing leads to discover their brand essence and connect with authentic communities.
+          PLACE Connect helps brands design authentic, high-impact activations — connecting you with the communities and movements that define the moment.
           </p>
         </motion.div>
 
@@ -50,7 +49,7 @@ export default function Home() {
             }}
             className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border border-white bg-transparent px-12 py-4 text-base font-light tracking-wider text-white transition-all duration-300 hover:bg-white hover:text-black"
           >
-            <span className="relative z-10">Connect with Culture</span>
+            <span className="relative z-10" style={{ fontFamily: 'var(--font-druk-wide)' }}>Connect with Culture</span>
             <motion.div
               className="absolute inset-0 bg-white"
               initial={{ scaleX: 0 }}

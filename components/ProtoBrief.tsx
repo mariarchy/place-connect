@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion';
 
 interface ProtoBriefProps {
+  brandName: string;
+  brandWebsite: string;
   mission: string;
   tone: string;
   communities: string;
@@ -12,6 +14,8 @@ interface ProtoBriefProps {
 }
 
 export function ProtoBrief({
+  brandName,
+  brandWebsite,
   mission,
   tone,
   communities,
@@ -19,7 +23,7 @@ export function ProtoBrief({
   budget,
   fileKeywords,
 }: ProtoBriefProps) {
-  const hasContent = mission || tone || communities || inspiration || budget || fileKeywords.length > 0;
+  const hasContent = brandName || brandWebsite || mission || tone || communities || inspiration || budget || fileKeywords.length > 0;
 
   return (
     <motion.div
@@ -43,6 +47,33 @@ export function ProtoBrief({
           </p>
         ) : (
           <div className="space-y-6">
+            {/* Brand Name */}
+            {brandName && (
+              <div>
+                <p className="mb-1 text-xs font-light uppercase tracking-wider text-gray-500">
+                  Brand Name
+                </p>
+                <p className="text-lg font-light text-white">{brandName}</p>
+              </div>
+            )}
+
+            {/* Brand Website */}
+            {brandWebsite && (
+              <div>
+                <p className="mb-1 text-xs font-light uppercase tracking-wider text-gray-500">
+                  Website
+                </p>
+                <a 
+                  href={brandWebsite} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-base font-light text-gray-300 hover:text-white transition-colors underline"
+                >
+                  {brandWebsite}
+                </a>
+              </div>
+            )}
+
             {/* Brand Essence */}
             {mission && (
               <div>

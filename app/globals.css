@@ -13,6 +13,7 @@
   --color-secondary: var(--secondary);
   --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
   --font-serif: var(--font-playfair), "Georgia", serif;
+  --font-heading: var(--font-druk-wide), system-ui, -apple-system, sans-serif;
 }
 
 body {
