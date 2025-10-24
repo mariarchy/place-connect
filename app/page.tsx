@@ -7,14 +7,9 @@ import { BRAND_ANSWERS_STORAGE_KEY } from '@/app/constants';
 export default function Home() {
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#0b0b0b] px-6 py-12">
-      {/* Background GIF */}
+      {/* Background Gradient - Temporary until video is optimized */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        <img
-          src="/landing-page.gif"
-          alt=""
-          className="h-full w-full object-cover opacity-40"
-        />
-        {/* Optional overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-blue-900/20" />
         <div className="absolute inset-0 bg-black/30" />
       </div>
       {/* Navigation */}
