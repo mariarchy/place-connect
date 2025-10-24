@@ -1,40 +1,46 @@
 {
-    "communities": [
-      {
-        "id": "five-points-project",
-        "name": "Five Points Project",
-        "description": "Five Points is bringing live music back to London, providing accessible music events in unique spaces to help combat isolation and loneliness.",
-        "eventTypes": ["Open jams", "Live music performances", "Workshops", "Hiking and wellness events"],
-        "reach": {
-          "instagramFollowers": 11900,
-          "averageAttendance": 50,
-          "partnerBrands": ["Jazz on Wick", "Jubel"],
-          "activeWhatsappMembers": 1000
-        }
-      },
-      {
-        "id": "urban-hikers-collective",
-        "name": "Urban Hikers Collective",
-        "description": "A group dedicated to discovering hidden hiking trails and urban wellness activities in London, combining physical activity with social connection.",
-        "eventTypes": ["Guided hikes", "Photography walks", "Wellness meetups"],
-        "reach": {
-          "instagramFollowers": 8500,
-          "averageAttendance": 35,
-          "partnerBrands": ["The North Face", "REI"],
-          "activeWhatsappMembers": 450
-        }
-      },
-      {
-        "id": "chess-and-culture-club",
-        "name": "Chess & Culture Club",
-        "description": "A community bringing chess enthusiasts together in cafes, bars, and cultural spaces while connecting through arts and discussions.",
-        "eventTypes": ["Chess nights", "Strategy workshops", "Cultural events"],
-        "reach": {
-          "instagramFollowers": 4200,
-          "averageAttendance": 25,
-          "partnerBrands": ["V&A Museum", "Local bookshops"],
-          "activeWhatsappMembers": 200
-        }
+  "communities": [
+    {
+      "id": "five-points-project",
+      "name": "Five Points Project",
+      "image": "/communities/five-points-project-1.png",
+      "instagram": "https://www.instagram.com/thefivepointsproject/",
+      "description": "Five Points is bringing live music back to London, providing accessible music events in unique spaces to help combat isolation and loneliness.",
+      "eventTypes": ["Open jams", "Street Jams", "Live music performances", "Workshops"],
+      "reach": {
+        "instagramFollowers": 11900,
+        "averageAttendance": 250,
+        "partnerBrands": [],
+        "activeWhatsappMembers": 1000
       }
-    ]
-  }
+    },
+    {
+      "id": "walk-this-way",
+      "name": "Walk This Way",
+      "image": "/communities/walk-this-way-1.png",
+      "instagram": "https://www.instagram.com/walk__this___way/",
+      "description": "A hiking community with hikes starting in London and travelling across the UK, aimed at building friendships and opening the outdoors for all.",
+      "eventTypes": ["Hiking", "Socials", "Walking Clubs"],
+      "reach": {
+        "instagramFollowers": 5300,
+        "averageAttendance": 100,
+        "partnerBrands": ["The North Face", "Arcteryx", "Grind Coffee"],
+        "activeWhatsappMembers": 700
+      }
+    },
+    {
+      "id": "knight-chess-club",
+      "name": "Knight Chess Club",
+      "image": "/communities/knight-chess-club-1.png",
+      "instagram": "https://www.instagram.com/knightclubchess/",
+      "description": "Outdoor chess club that allows strangers to connect over shared moments of the game, filling up venues across London.",
+      "eventTypes": ["Chess Club", "Outdoor Games Night", "Night Club Events"],
+      "reach": {
+        "instagramFollowers": 7400,
+        "averageAttendance": 300,
+        "partnerBrands": ["Cafe 1001", "Homecoming Festival", "All Points East Festival"],
+        "activeWhatsappMembers": 1000
+      }
+    }
+  ]
+}

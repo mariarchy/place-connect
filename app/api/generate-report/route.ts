@@ -65,7 +65,7 @@ const SYSTEM_PROMPT = `You are a creative strategist at an AI PR agency helping 
 
 - Campaign Idea: A few sentences on the campaign strategy. Inspire in the voice of a PR agency.
 
-- Potential Collaborations: A list of collaborations it can organize with communities from PLACE Connect's network/database with details on the engagement that best fits the campaign idea and strategy
+- Potential Collaborations: A list of 3 collaborations it can organize with communities from PLACE Connect's network/database with details on the engagement that best fits the campaign idea and strategy
 
 - Next Steps: Action items, something that grounds this idea and makes it seem more feasible.
 

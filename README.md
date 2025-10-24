@@ -29,17 +29,18 @@ A cinematic conversational upload UI for marketing leads to describe their brand
 - **Error Handling**: Graceful degradation with mock data if API key unavailable
 - **Rate Limiting**: Built-in protection (5 requests/minute per IP)
 
-### Step 3b: Dynamic Visual Moodboard
-- **Unsplash Integration**: Server-side API calls for copyright-free imagery
-- **Keyword-Based Search**: Uses Step 2 keywords to curate relevant visuals
-- **Interactive Grid**: 3x3 responsive grid with hover effects and image enlargement
-- **Lightbox Modal**: Click images for full-size view with photographer credits
-- **Image Selection**: "Use in Deck" toggle to mark images for export
-- **Regeneration**: Fetch different images with same keywords (uses pagination seed)
-- **Two-Column Layout**: Strategy report (60%) + Moodboard (40%), responsive stacking
-- **PDF Export**: html2canvas + jsPDF to generate downloadable campaign deck
-- **Server Caching**: 5-minute in-memory cache to reduce API quota usage
-- **Mock Fallback**: High-quality Unsplash demo images when no API key
+### Step 3b: Community Collaborations Page
+- **Vetted Communities**: Showcases AI-recommended communities from PLACE Connect network
+- **Horizontal Carousel**: Manual scroll/drag carousel with community cards
+- **Community Cards**: Display hero image, name, engagement type pills, description, and reach stats
+- **Interactive Modal**: Click cards to view detailed collaboration info with full-size image
+- **Community Images**: Each community has a featured image stored in `/public/communities/`
+- **Image Optimization**: Images with hover zoom effects and gradient overlays
+- **Selection Flow**: Select a community and proceed to contact page
+- **Data Enrichment**: Stitches Gemini collaboration data with community details from database
+- **Smooth Animations**: Framer Motion card hover effects and modal transitions
+- **Responsive Design**: Mobile-optimized carousel with touch scroll
+- **Scrollable Modal**: Modal supports scrolling for longer content
 
 ## Getting Started
 
@@ -104,6 +105,10 @@ npm start
 /app
   /brand
     page.tsx          # Main brand discovery Q&A page with multi-view flow
+  /communities
+    page.tsx          # Community collaborations carousel and selection
+  /contact
+    page.tsx          # Contact page (placeholder for AI email generation)
   layout.tsx          # Root layout with fonts
   page.tsx            # Landing page
   globals.css         # Global styles and theme
@@ -112,13 +117,15 @@ npm start
   QuestionCard.tsx    # Animated question card component
   ProtoBrief.tsx      # Live-updating summary panel
   BrandSummaryCard.tsx # Final brand summary with report generation
-  CampaignReport.tsx  # AI-generated campaign strategy with moodboard
-  MoodboardGrid.tsx   # Interactive image grid with lightbox
+  CampaignReport.tsx  # AI-generated campaign strategy with hero moodboard
 
 /lib
   fileMapping.ts      # Mock file-to-keyword mapping logic
   summarize.ts        # Client-side brand essence synthesis
-  communities.json    # Database of available communities
+  communities.json    # Database of available communities with images
+
+/public
+  /communities        # Community images directory (upload JPGs here)
 
 /app/api
   /generate-report
@@ -126,6 +133,28 @@ npm start
   /moodboard
     route.ts          # Serverless API endpoint for Unsplash integration
 ```
+
+## Community Images
+
+### Adding Community Images
+
+Place community images in the `/public/communities/` directory with the following naming convention:
+
+- `five-points-project.jpg`
+- `walk-this-way.jpg`
+- `knight-chess-club.jpg`
+
+**Recommended Image Specs:**
+- **Format**: JPG or PNG
+- **Dimensions**: 800x600px (4:3 aspect ratio) or similar
+- **File size**: < 500KB for optimal loading
+- **Content**: High-quality photos that represent the community's vibe and activities
+
+Images will automatically appear in:
+1. **Carousel cards**: 192px height with gradient overlay and hover zoom
+2. **Modal overlay**: 256px height hero image with dark gradient
+
+If no image is provided, the card will display without an image (graceful fallback).
 
 ## Mock File Parsing
 
@@ -189,12 +218,17 @@ if (isOutdoor && adjectives.length >= 2) {
 4. **Brand Summary** → Click "Summarize Brand" to see synthesized brand essence
 5. **Campaign Generation** → Click "✨ Generate Campaign Report" to trigger AI
 6. **Loading State** → Shimmer animation while Gemini generates strategy
-7. **Campaign Report + Moodboard** → Two-column layout:
-   - Left: AI strategy report with title, insights, collaborations, next steps
-   - Right: Visual moodboard with 8 curated images based on keywords
-8. **Image Interaction** → Hover to see tags, click for lightbox, toggle "Use in Deck"
-9. **Regenerate Options** → Regenerate report (AI) or moodboard (new images)
-10. **Export PDF** → Click "Export Deck (PDF)" to download complete campaign deck
+7. **Campaign Report Page** → Full-page experience with:
+   - Hero: Diagonal overlapping Unsplash images with campaign title overlay
+   - Campaign description and cultural insights
+   - Market trends metrics (AI-generated)
+   - Potential collaborations with budgets and offerings
+8. **Community Collaborations** (`/communities`) → Click "Explore Communities →"
+   - Horizontal carousel of vetted community cards
+   - Click card to view modal with detailed collaboration info
+   - Select a community to proceed
+9. **Contact Page** (`/contact`) → Placeholder for AI-generated outreach
+10. **Regenerate & Export** → Regenerate report or export as PDF anytime
 11. **Edit Capability** → Navigate back to edit brand inputs anytime
 
 ## Design System
@@ -264,19 +298,19 @@ No external state library required for this demo.
 ✅ Errors displayed gracefully with dismissible messages  
 ✅ Mock data fallback when no API key configured
 
-### Step 3b: Visual Moodboard
-✅ Moodboard fetches 8 images from Unsplash based on keywords  
-✅ Responsive 2x4 grid (desktop) with hover effects  
-✅ Hover shows image tags and selection heart icon  
-✅ Click opens lightbox modal with large image view  
-✅ Lightbox displays photographer credits and "Use in Deck" toggle  
-✅ "Regenerate Moodboard" fetches different images (pagination seed)  
-✅ Staggered Framer Motion animations on grid load/update  
-✅ Two-column layout: Report (60%) + Moodboard (40%)  
-✅ Mobile responsive: stacks moodboard below report  
-✅ "Export Deck (PDF)" compiles report + selected images  
-✅ Server-side caching reduces API quota usage (5min cache)  
-✅ Mock images fallback when no Unsplash API key
+### Step 3b: Community Collaborations
+✅ Communities page loads with carousel of AI-recommended communities  
+✅ Cards display community name, engagement types, description, and stats  
+✅ Manual horizontal scroll with CSS snap points  
+✅ Click card opens modal with full collaboration details  
+✅ Modal shows budget, non-monetary offerings, and community reach metrics  
+✅ "Select this community" button highlights card and reveals "Next" CTA  
+✅ Selected community data persists to contact page  
+✅ Smooth Framer Motion animations on hover and modal open/close  
+✅ Hero section with diagonal overlapping Unsplash images  
+✅ "Export Deck (PDF)" compiles full campaign report with images  
+✅ Data enrichment: Gemini collaborations + communities.json details  
+✅ Mobile responsive: carousel works with touch scroll
 
 ## Testing
 
@@ -305,43 +339,52 @@ No external state library required for this demo.
    - Next steps (actionable bullets)
 5. Click "Regenerate" to get a fresh perspective
 
-### Testing Step 3b: Visual Moodboard
+### Testing Step 3b: Community Collaborations
 
-1. After generating campaign report, observe automatic moodboard load (right column)
-2. Verify 8 images displayed in responsive grid
-3. **Hover Effects**: Hover over images to see tags and heart icon
-4. **Lightbox**: Click an image to open full-size view
-   - Verify photographer attribution
-   - Toggle "Use in Deck" button
-   - Close with × button or background click
-5. **Regenerate**: Click "Regenerate" on moodboard to fetch new images
-6. **Export PDF**: 
-   - Select 2-3 images with "Use in Deck"
-   - Click "Export Deck (PDF)" button
-   - Verify PDF downloads with report content
-   - Check image quality and layout
-7. **Mobile Responsive**: Resize browser to mobile width
-   - Verify moodboard stacks below report
-   - Check grid becomes 2 columns
+1. After viewing campaign report, click "Explore Communities →" at bottom
+2. Verify navigation to `/communities` page
+3. **Community Cards**: 
+   - Verify cards display in horizontal carousel
+   - Check community name, engagement type pills, description
+   - Verify Instagram followers and avg. attendance stats
+4. **Card Interaction**:
+   - Hover over card to see scale/elevation animation
+   - Click card to open modal overlay
+5. **Modal Details**:
+   - Verify modal shows full community description
+   - Check collaboration details (engagement type, budget, description)
+   - Verify non-monetary offerings displayed as pills
+   - Check community stats grid (Instagram, attendance, WhatsApp, event types)
+   - Verify Instagram link is clickable
+6. **Selection Flow**:
+   - Click "Select this community" button
+   - Modal should close
+   - Card should highlight with white border and checkmark
+   - "Next →" button should appear at bottom-right
+7. **Navigation**:
+   - Click "Next →" to navigate to `/contact`
+   - Verify selected community data appears on contact page
+8. **Mobile Responsive**: 
+   - Resize to mobile width
+   - Verify carousel scrolls horizontally with touch
+   - Check modal is properly sized and scrollable
 
 **Example Test Data:**
-- Mission: "We connect urban creators with sustainable outdoor experiences"
-- Tone: "playful, authentic, bold"
-- Communities: "skaters, climbers, photographers"
-- Try uploading a file with "salomon" in the name to trigger "outdoor / sport" keywords
+- Use the chess keywords to trigger "Knight Chess Club" recommendation
+- Use outdoor/sport keywords to trigger "Walk This Way" recommendation
+- Use music/creative keywords to trigger "Five Points Project" recommendation
 
 **Expected Behavior:**
 
-**Campaign Report:**
-- Without Gemini API key: Returns rich mock data (chess, outdoor, or generic campaign based on keywords)
-- With Gemini API key: Calls real API and returns AI-generated campaign strategy
-- Rate limit: After 5 requests in 1 minute, shows "Rate limit exceeded" error
+**Communities Page:**
+- Without campaign report: Shows "No collaborations found" with link back to brand discovery
+- With campaign report: Displays AI-recommended communities enriched with data from `communities.json`
+- Data persistence: Selected community saved to sessionStorage for contact page
 
-**Moodboard:**
-- Without Unsplash API key: Returns 8 high-quality mock images from Unsplash demo pool
-- With Unsplash API key: Searches Unsplash for keyword-relevant images
-- Caching: Same keywords return cached results for 5 minutes
-- Regenerate: Changes pagination seed to fetch different images
+**Hero Moodboard:**
+- Without Unsplash API key: Returns placeholder images in diagonal layout
+- With Unsplash API key: Fetches keyword-relevant images with creative overlapping arrangement
+- Images have reduced shadow overlay for better title visibility
 
 ## Technical Details
 
